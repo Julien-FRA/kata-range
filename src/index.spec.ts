@@ -3,30 +3,10 @@ import * as matchers from "jest-extended";
 import { calcSegment, Segment } from "./index";
 expect.extend(matchers);
 
-it("Should test empty segment", function () {
-  // Given
-  const firstSegment = [];
-  const secondSegment = [];
-  // When
-  const inSegment = calcSegment(firstSegment, secondSegment);
-  // Then
-  expect(inSegment).toEqual(null);
-});
-
-it("Should test empty one segment", function () {
-  // Given
-  const firstSegment = [];
-  const secondSegment = [0, 0];
-  // When
-  const inSegment = calcSegment(firstSegment, secondSegment);
-  // Then
-  expect(inSegment).toEqual(null);
-});
-
 it("Should test same segment at [0,0]", function () {
   // Given
-  const firstSegment = [0, 0];
-  const secondSegment = [0, 0];
+  const firstSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 0, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 0, inclusion: "INCLUDED" }];
   // When
   const inSegment = calcSegment(firstSegment, secondSegment);
   // Then
@@ -35,8 +15,8 @@ it("Should test same segment at [0,0]", function () {
 
 it("Should test segment at [0,0] and [0,1]", function () {
   // Given
-  const firstSegment = [0, 0];
-  const secondSegment = [0, 1];
+  const firstSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 0, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 1, inclusion: "INCLUDED" }];
   // When
   const inSegment = calcSegment(firstSegment, secondSegment);
   // Then
@@ -45,8 +25,8 @@ it("Should test segment at [0,0] and [0,1]", function () {
 
 it("Should test segment at [1,2] and [0,1]", function () {
   // Given
-  const firstSegment = [1, 2];
-  const secondSegment = [0, 1];
+  const firstSegment: Segment = [{ value: 1, inclusion: "INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 1, inclusion: "INCLUDED" }];
   // When
   const inSegment = calcSegment(firstSegment, secondSegment);
   // Then
@@ -55,13 +35,40 @@ it("Should test segment at [1,2] and [0,1]", function () {
 
 it("Should test segment at [0,1] and [1,2]", function () {
   // Given
-  const firstSegment = [0, 1];
-  const secondSegment = [1, 2];
+  const firstSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 1, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 1, inclusion: "INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
   // When
   const inSegment = calcSegment(firstSegment, secondSegment);
   // Then
   expect(inSegment).toEqual(false);
 });
 
+it("Should test segment at [2,3] and [1,2]", function () {
+  // Given
+  const firstSegment: Segment = [{ value: 2, inclusion: "INCLUDED" }, { value: 3, inclusion: "INCLUDED" }]
+  const secondSegment: Segment = [{ value: 1, inclusion: "INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
+  // When
+  const inSegment = calcSegment(firstSegment, secondSegment);
+  // Then
+  expect(inSegment).toEqual(false);
+});
 
+it("Should test segment at [1,2] and [0,2[", function () {
+  // Given
+  const firstSegment: Segment = [{ value: 1, inclusion: "INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 2, inclusion: "NOT_INCLUDED" }];
+  // When
+  const inSegment = calcSegment(firstSegment, secondSegment);
+  // Then
+  expect(inSegment).toEqual(false);
+});
 
+it("Should test segment at ]1,2] and [0,2]", function () {
+  // Given
+  const firstSegment: Segment = [{ value: 1, inclusion: "NOT_INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
+  const secondSegment: Segment = [{ value: 0, inclusion: "INCLUDED" }, { value: 2, inclusion: "INCLUDED" }];
+  // When
+  const inSegment = calcSegment(firstSegment, secondSegment);
+  // Then
+  expect(inSegment).toEqual(false);
+});
